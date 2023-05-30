@@ -1,0 +1,5 @@
+name: RecipeBookClick
+version: '${version}'
+main: com.github.kaspiandev.recipebookclick.RecipeBookClick
+api-version: 1.13
+authors: [ KaspianDev ]

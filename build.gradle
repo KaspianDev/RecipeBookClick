@@ -1,0 +1,59 @@
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+group = "com.github.kaspiandev"
+version = "1"
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.codemc.io/repository/maven-snapshots/" }
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+}
+
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT"
+
+    implementation "com.github.retrooper.packetevents:spigot:2.0.0-SNAPSHOT"
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+    shadowJar {
+        archiveFileName = "RecipeBookClick-${this.version}.jar"
+
+        minimize()
+        dependencies {
+            exclude(dependency("com.google.code.gson:gson:2.8.0"))
+        }
+    }
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset "UTF-8"
+    filesMatching("plugin.yml") {
+        expand props
+    }
+}
